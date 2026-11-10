@@ -7,15 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		245141F1A490686EFD5DC378 /* HistoryVisit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51A4ED498B01AA514F41EB6 /* HistoryVisit.swift */; };
+		291A4CEE9A9A8E353139417E /* DataRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE754B2499630A042B9FD2BB /* DataRepository.swift */; };
+		31864358A40F22D005A03A48 /* EpisodeTitleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45A4C189BDB7C2F1C3949CF /* EpisodeTitleParser.swift */; };
+		36C845C99E3D36DFDD58C9B1 /* CastDeviceItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6141D1A39272C398DB4D31 /* CastDeviceItem.swift */; };
+		3BA9461BB9D817D00A104B4B /* BookmarkItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C541DF9BE14B568818398A /* BookmarkItem.swift */; };
+		9BF643079A4147C3FE7B388D /* WatchEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3274B68A589CD2F9795CB52 /* WatchEntry.swift */; };
 		A10000012CE0000100000001 /* CastBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012CE0000100000001 /* CastBrowserApp.swift */; };
 		A10000022CE0000100000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000022CE0000100000002 /* ContentView.swift */; };
+		D678465AA1D2F1A3234672C3 /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B48410D9B9B131306273807 /* TabItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0B48410D9B9B131306273807 /* TabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabItem.swift; path = CastBrowser/Sources/Data/Models/TabItem.swift; sourceTree = SOURCE_ROOT; };
+		46C541DF9BE14B568818398A /* BookmarkItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookmarkItem.swift; path = CastBrowser/Sources/Data/Models/BookmarkItem.swift; sourceTree = SOURCE_ROOT; };
+		7B6141D1A39272C398DB4D31 /* CastDeviceItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastDeviceItem.swift; path = CastBrowser/Sources/Data/Models/CastDeviceItem.swift; sourceTree = SOURCE_ROOT; };
 		A20000012CE0000100000001 /* CastBrowserApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastBrowserApp.swift; sourceTree = "<group>"; };
 		A20000022CE0000100000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A20000032CE0000100000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A30000012CE0000100000001 /* CastBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CastBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A51A4ED498B01AA514F41EB6 /* HistoryVisit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HistoryVisit.swift; path = CastBrowser/Sources/Data/Models/HistoryVisit.swift; sourceTree = SOURCE_ROOT; };
+		E3274B68A589CD2F9795CB52 /* WatchEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchEntry.swift; path = CastBrowser/Sources/Data/Models/WatchEntry.swift; sourceTree = SOURCE_ROOT; };
+		E45A4C189BDB7C2F1C3949CF /* EpisodeTitleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EpisodeTitleParser.swift; path = CastBrowser/Sources/Data/Parsers/EpisodeTitleParser.swift; sourceTree = SOURCE_ROOT; };
+		FE754B2499630A042B9FD2BB /* DataRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DataRepository.swift; path = CastBrowser/Sources/Data/DataRepository.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +48,13 @@
 			children = (
 				A50000022CE0000100000002 /* CastBrowser */,
 				A50000032CE0000100000003 /* Products */,
+				0B48410D9B9B131306273807 /* TabItem.swift */,
+				E3274B68A589CD2F9795CB52 /* WatchEntry.swift */,
+				A51A4ED498B01AA514F41EB6 /* HistoryVisit.swift */,
+				46C541DF9BE14B568818398A /* BookmarkItem.swift */,
+				7B6141D1A39272C398DB4D31 /* CastDeviceItem.swift */,
+				E45A4C189BDB7C2F1C3949CF /* EpisodeTitleParser.swift */,
+				FE754B2499630A042B9FD2BB /* DataRepository.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -156,6 +177,13 @@
 			files = (
 				A10000012CE0000100000001 /* CastBrowserApp.swift in Sources */,
 				A10000022CE0000100000002 /* ContentView.swift in Sources */,
+				D678465AA1D2F1A3234672C3 /* TabItem.swift in Sources */,
+				9BF643079A4147C3FE7B388D /* WatchEntry.swift in Sources */,
+				245141F1A490686EFD5DC378 /* HistoryVisit.swift in Sources */,
+				3BA9461BB9D817D00A104B4B /* BookmarkItem.swift in Sources */,
+				36C845C99E3D36DFDD58C9B1 /* CastDeviceItem.swift in Sources */,
+				31864358A40F22D005A03A48 /* EpisodeTitleParser.swift in Sources */,
+				291A4CEE9A9A8E353139417E /* DataRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +373,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = A00000012CE0000100000001 /* Project object */;
 }
