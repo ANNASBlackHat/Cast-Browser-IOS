@@ -9,18 +9,47 @@ import WebKit
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Query(sort: \TabItem.orderIndex) private var tabs: [TabItem]
 
     @State private var viewModel: BrowserViewModel?
     @State private var showingTabsSheet = false
     @State private var showingDetectedStreamsSheet = false
     @State private var showingRemoteSheet = false
+    @State private var showingLibrarySheet = false
     @FocusState private var isUrlFieldFocused: Bool
 
     var body: some View {
         NavigationStack {
             if let viewModel {
                 VStack(spacing: 0) {
+                    // iPad Desktop-style Tab Strip when in regular width (iPad / Stage Manager)
+                    if horizontalSizeClass == .regular {
+                        IpadTabStripView(
+                            tabs: tabs,
+                            activeTabId: viewModel.currentTabId,
+                            onSelectTab: { tab in
+                                Task {
+                                    let repo = DataRepository(modelContext: modelContext)
+                                    repo.setActiveTab(id: tab.id)
+                                    await viewModel.activateTab(id: tab.id, urlString: tab.urlString, title: tab.title)
+                                }
+                            },
+                            onCloseTab: { tab in
+                                Task {
+                                    await viewModel.closeTab(id: tab.id)
+                                }
+                            },
+                            onNewTab: {
+                                Task {
+                                    let repo = DataRepository(modelContext: modelContext)
+                                    let newTab = repo.createTab()
+                                    await viewModel.activateTab(id: newTab.id, urlString: newTab.urlString, title: newTab.title)
+                                }
+                            }
+                        )
+                    }
+
                     // Top Search / Location Bar
                     HStack(spacing: 12) {
                         Image(systemName: "lock.fill")
@@ -37,6 +66,16 @@ struct ContentView: View {
                             .onSubmit {
                                 viewModel.load(input: viewModel.currentUrlText)
                             }
+
+                        // Bookmark current page button
+                        Button(action: {
+                            let repo = DataRepository(modelContext: modelContext)
+                            repo.addBookmark(urlString: viewModel.currentUrlText, title: viewModel.currentTitle)
+                        }) {
+                            Image(systemName: "star")
+                                .font(.caption.bold())
+                                .foregroundColor(.secondary)
+                        }
 
                         if viewModel.isLoading {
                             Button(action: { viewModel.activeWebView?.stopLoading() }) {
@@ -170,12 +209,14 @@ struct ContentView: View {
 
                         Spacer()
 
-                        Button(action: {}) {
+                        // Library: Continue Watching & History
+                        Button(action: { showingLibrarySheet = true }) {
                             Image(systemName: "clock")
                         }
 
                         Spacer()
 
+                        // Compact tab switcher button (always accessible)
                         Button(action: { showingTabsSheet = true }) {
                             HStack(spacing: 2) {
                                 Image(systemName: "square.on.square")
@@ -216,6 +257,12 @@ struct ContentView: View {
                 .sheet(isPresented: $showingRemoteSheet) {
                     CastRemoteSheet()
                         .presentationDetents([.medium, .large])
+                }
+                .sheet(isPresented: $showingLibrarySheet) {
+                    HomeContinueWatchingView(onResumeUrl: { url in
+                        viewModel.load(input: url)
+                    })
+                    .presentationDetents([.medium, .large])
                 }
             } else {
                 ProgressView("Starting Browser...")

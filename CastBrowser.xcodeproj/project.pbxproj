@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		020A4ACDB5295495BB611528 /* HomeContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E44C13B7392A3318965CB9 /* HomeContinueWatchingView.swift */; };
 		04014E699053F7E52D3C069D /* WKWebViewPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E946049B54B0E7671E1084 /* WKWebViewPool.swift */; };
 		04AC4DB5A5754BBB3C6B7D6F /* DlnaSoapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0D4B0D81D4B6F637397526 /* DlnaSoapHelper.swift */; };
+		090C42909E8C73F26F98B669 /* BookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E3479D91BB7223BDF2B4E7 /* BookmarksView.swift */; };
+		0A4440F092C839AAA31DB193 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF64A07B813E26D64A9C649 /* HistoryView.swift */; };
 		1B2F441C91DDCA9C18993315 /* DetectedSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5924F1EA053AB94552E2700 /* DetectedSubtitle.swift */; };
+		1CE94F1C8CD495F44BE93A4C /* ContinueWatchingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1C4E83B25C073C077A4C19 /* ContinueWatchingCard.swift */; };
 		245141F1A490686EFD5DC378 /* HistoryVisit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51A4ED498B01AA514F41EB6 /* HistoryVisit.swift */; };
 		247D4C47B80F64A1551C08CB /* ScriptBridgeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA64CBFA433EF4F4FFEABD0 /* ScriptBridgeHandler.swift */; };
 		291A4CEE9A9A8E353139417E /* DataRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE754B2499630A042B9FD2BB /* DataRepository.swift */; };
@@ -27,6 +31,7 @@
 		6F444212974735FEA2F9F5E7 /* AdBlockRules.json in Resources */ = {isa = PBXBuildFile; fileRef = 572E4E5A9CA54AA014FEF1B6 /* AdBlockRules.json */; };
 		7C284787AB78B571B998EF71 /* StreamProbeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23343FFAA5CF74BDE807FB1 /* StreamProbeService.swift */; };
 		7C3344D0BC83107B1C8FB48A /* CastSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4E439CABAD27BA658DD18F /* CastSessionManager.swift */; };
+		7CC549278A8454026EDB3267 /* IpadTabStripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A304C3EBA6B5E95807E47B5 /* IpadTabStripView.swift */; };
 		8FAA45CFA945DE370BB49FAD /* HlsPlaylistRewriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71AA4CE2AD1CD3F3857B5E11 /* HlsPlaylistRewriter.swift */; };
 		90DE46C6A5D6A99F1BDFF547 /* CastDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D842658B266515BC5DB2E1 /* CastDevice.swift */; };
 		9BF643079A4147C3FE7B388D /* WatchEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3274B68A589CD2F9795CB52 /* WatchEntry.swift */; };
@@ -50,6 +55,7 @@
 		0B48410D9B9B131306273807 /* TabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabItem.swift; path = CastBrowser/Sources/Data/Models/TabItem.swift; sourceTree = SOURCE_ROOT; };
 		1ADA4502BD00DBCDC959D6EE /* DlnaDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DlnaDiscovery.swift; path = CastBrowser/Sources/Cast/DLNA/DlnaDiscovery.swift; sourceTree = SOURCE_ROOT; };
 		230C46E4AFA18F6570C42AC1 /* DetectedStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DetectedStream.swift; path = CastBrowser/Sources/Detect/Models/DetectedStream.swift; sourceTree = SOURCE_ROOT; };
+		2A304C3EBA6B5E95807E47B5 /* IpadTabStripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IpadTabStripView.swift; path = CastBrowser/Sources/UI/Components/IpadTabStripView.swift; sourceTree = SOURCE_ROOT; };
 		35284E0EABA851A1833291C3 /* TabStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabStateManager.swift; path = CastBrowser/Sources/Browser/TabStateManager.swift; sourceTree = SOURCE_ROOT; };
 		3F4B4193ACD9A58EE8AD7A8F /* AirPlayRoutePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AirPlayRoutePicker.swift; path = CastBrowser/Sources/Cast/AirPlay/AirPlayRoutePicker.swift; sourceTree = SOURCE_ROOT; };
 		41E946049B54B0E7671E1084 /* WKWebViewPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WKWebViewPool.swift; path = CastBrowser/Sources/Browser/WKWebViewPool.swift; sourceTree = SOURCE_ROOT; };
@@ -60,6 +66,7 @@
 		549A4BBC879160FF0BBDDC29 /* AirPlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AirPlayController.swift; path = CastBrowser/Sources/Cast/AirPlay/AirPlayController.swift; sourceTree = SOURCE_ROOT; };
 		572E4E5A9CA54AA014FEF1B6 /* AdBlockRules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = AdBlockRules.json; path = CastBrowser/Resources/AdBlockRules.json; sourceTree = SOURCE_ROOT; };
 		59474517B9986EF0E4281A70 /* LocalHttpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalHttpServer.swift; path = CastBrowser/Sources/Proxy/LocalHttpServer.swift; sourceTree = SOURCE_ROOT; };
+		5A1C4E83B25C073C077A4C19 /* ContinueWatchingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContinueWatchingCard.swift; path = CastBrowser/Sources/UI/Components/ContinueWatchingCard.swift; sourceTree = SOURCE_ROOT; };
 		62A549B89FAA8897166E5D0C /* BrowserWebViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BrowserWebViewRepresentable.swift; path = CastBrowser/Sources/Browser/BrowserWebViewRepresentable.swift; sourceTree = SOURCE_ROOT; };
 		71AA4CE2AD1CD3F3857B5E11 /* HlsPlaylistRewriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HlsPlaylistRewriter.swift; path = CastBrowser/Sources/Proxy/HlsPlaylistRewriter.swift; sourceTree = SOURCE_ROOT; };
 		7B6141D1A39272C398DB4D31 /* CastDeviceItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastDeviceItem.swift; path = CastBrowser/Sources/Data/Models/CastDeviceItem.swift; sourceTree = SOURCE_ROOT; };
@@ -72,6 +79,7 @@
 		A20000032CE0000100000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A30000012CE0000100000001 /* CastBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CastBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A51A4ED498B01AA514F41EB6 /* HistoryVisit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HistoryVisit.swift; path = CastBrowser/Sources/Data/Models/HistoryVisit.swift; sourceTree = SOURCE_ROOT; };
+		A5E44C13B7392A3318965CB9 /* HomeContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeContinueWatchingView.swift; path = CastBrowser/Sources/UI/Home/HomeContinueWatchingView.swift; sourceTree = SOURCE_ROOT; };
 		AC0D4B0D81D4B6F637397526 /* DlnaSoapHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DlnaSoapHelper.swift; path = CastBrowser/Sources/Cast/DLNA/DlnaSoapHelper.swift; sourceTree = SOURCE_ROOT; };
 		B38244738DBDD5842A0635E2 /* BrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BrowserViewModel.swift; path = CastBrowser/Sources/Browser/BrowserViewModel.swift; sourceTree = SOURCE_ROOT; };
 		C23343FFAA5CF74BDE807FB1 /* StreamProbeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreamProbeService.swift; path = CastBrowser/Sources/Detect/StreamProbeService.swift; sourceTree = SOURCE_ROOT; };
@@ -82,7 +90,9 @@
 		E3A74DB4A7EAA52BD5AEBBCD /* ContentBlockerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentBlockerManager.swift; path = CastBrowser/Sources/Browser/ContentBlockerManager.swift; sourceTree = SOURCE_ROOT; };
 		E45A4C189BDB7C2F1C3949CF /* EpisodeTitleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EpisodeTitleParser.swift; path = CastBrowser/Sources/Data/Parsers/EpisodeTitleParser.swift; sourceTree = SOURCE_ROOT; };
 		EC4E439CABAD27BA658DD18F /* CastSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastSessionManager.swift; path = CastBrowser/Sources/Cast/CastSessionManager.swift; sourceTree = SOURCE_ROOT; };
+		F1E3479D91BB7223BDF2B4E7 /* BookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookmarksView.swift; path = CastBrowser/Sources/UI/History/BookmarksView.swift; sourceTree = SOURCE_ROOT; };
 		F85247399F5E1D8ED9A371B4 /* CastPlaybackState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastPlaybackState.swift; path = CastBrowser/Sources/Cast/Models/CastPlaybackState.swift; sourceTree = SOURCE_ROOT; };
+		FAF64A07B813E26D64A9C649 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HistoryView.swift; path = CastBrowser/Sources/UI/History/HistoryView.swift; sourceTree = SOURCE_ROOT; };
 		FE754B2499630A042B9FD2BB /* DataRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DataRepository.swift; path = CastBrowser/Sources/Data/DataRepository.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -136,6 +146,11 @@
 				4DD649CF9D028A0F77FB51A7 /* DlnaController.swift */,
 				EC4E439CABAD27BA658DD18F /* CastSessionManager.swift */,
 				C9774ACABB7401584347F9B4 /* CastRemoteSheet.swift */,
+				2A304C3EBA6B5E95807E47B5 /* IpadTabStripView.swift */,
+				5A1C4E83B25C073C077A4C19 /* ContinueWatchingCard.swift */,
+				FAF64A07B813E26D64A9C649 /* HistoryView.swift */,
+				F1E3479D91BB7223BDF2B4E7 /* BookmarksView.swift */,
+				A5E44C13B7392A3318965CB9 /* HomeContinueWatchingView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -292,6 +307,11 @@
 				6414437F899DB5433A7703F3 /* DlnaController.swift in Sources */,
 				7C3344D0BC83107B1C8FB48A /* CastSessionManager.swift in Sources */,
 				328941D1AAC03C0224FB0EC0 /* CastRemoteSheet.swift in Sources */,
+				7CC549278A8454026EDB3267 /* IpadTabStripView.swift in Sources */,
+				1CE94F1C8CD495F44BE93A4C /* ContinueWatchingCard.swift in Sources */,
+				0A4440F092C839AAA31DB193 /* HistoryView.swift in Sources */,
+				090C42909E8C73F26F98B669 /* BookmarksView.swift in Sources */,
+				020A4ACDB5295495BB611528 /* HomeContinueWatchingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
