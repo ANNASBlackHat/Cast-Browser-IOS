@@ -1,0 +1,18 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+project.xcworkspace/xcuserdata/
+*.xcuserdatad
+
+# macOS
+.DS_Store
+
+# Swift PM
+.build/
+.swiftpm/
+
+# User-specific
+*.mode1v3
+*.mode2v3
+*.perspectivev3
