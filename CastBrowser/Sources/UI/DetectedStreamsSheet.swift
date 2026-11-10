@@ -9,13 +9,15 @@ import AVKit
 struct DetectedStreamsSheet: View {
     let streams: [DetectedStream]
     let subtitles: [DetectedSubtitle]
-    let onCastStream: (DetectedStream) -> Void
+    let onCastStream: (DetectedStream, CastDevice?) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var previewPlayer: AVPlayer?
     @State private var showingLocalPlayer = false
     @State private var activeStreamForPlayer: DetectedStream?
     @State private var copiedUrl: String?
+    @State private var showingDeviceSelector = false
+    @State private var selectedStreamForCasting: DetectedStream?
 
     var body: some View {
         NavigationStack {
@@ -73,8 +75,8 @@ struct DetectedStreamsSheet: View {
                                 HStack(spacing: 12) {
                                     // 1. Cast Button
                                     Button(action: {
-                                        onCastStream(stream)
-                                        dismiss()
+                                        selectedStreamForCasting = stream
+                                        showingDeviceSelector = true
                                     }) {
                                         Label("Cast to TV", systemImage: "tv")
                                             .font(.subheadline.bold())
@@ -142,6 +144,25 @@ struct DetectedStreamsSheet: View {
                     }
                 }
             }
+            .confirmationDialog("Choose Casting Device", isPresented: $showingDeviceSelector, titleVisibility: .visible) {
+                Button("AirPlay 2 (Apple TV / Roku / Smart TV)") {
+                    if let stream = selectedStreamForCasting {
+                        onCastStream(stream, nil)
+                        dismiss()
+                    }
+                }
+
+                ForEach(CastSessionManager.shared.availableDlnaDevices) { device in
+                    Button("\(device.name) (DLNA)") {
+                        if let stream = selectedStreamForCasting {
+                            onCastStream(stream, device)
+                            dismiss()
+                        }
+                    }
+                }
+
+                Button("Cancel", role: .cancel) {}
+            }
             .fullScreenCover(isPresented: $showingLocalPlayer, onDismiss: {
                 previewPlayer?.pause()
                 previewPlayer = nil
@@ -153,6 +174,9 @@ struct DetectedStreamsSheet: View {
                             previewPlayer.play()
                         }
                 }
+            }
+            .task {
+                await CastSessionManager.shared.refreshDlnaDevices()
             }
         }
     }

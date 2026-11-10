@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var viewModel: BrowserViewModel?
     @State private var showingTabsSheet = false
     @State private var showingDetectedStreamsSheet = false
+    @State private var showingRemoteSheet = false
     @FocusState private var isUrlFieldFocused: Bool
 
     var body: some View {
@@ -84,6 +85,47 @@ struct ContentView: View {
                         }
                     }
 
+                    // Floating Mini-Player for Active Cast Session
+                    if CastSessionManager.shared.playbackState.status == .playing || CastSessionManager.shared.playbackState.status == .paused {
+                        HStack(spacing: 12) {
+                            Image(systemName: "tv.fill")
+                                .foregroundColor(.accentColor)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(CastSessionManager.shared.currentMediaTitle)
+                                    .font(.caption.bold())
+                                    .lineLimit(1)
+                                Text(CastSessionManager.shared.activeDevice?.name ?? "Casting to TV")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            Spacer()
+
+                            Button(action: {
+                                if CastSessionManager.shared.playbackState.status == .playing {
+                                    CastSessionManager.shared.pause()
+                                } else {
+                                    CastSessionManager.shared.play()
+                                }
+                            }) {
+                                Image(systemName: CastSessionManager.shared.playbackState.status == .playing ? "pause.fill" : "play.fill")
+                                    .font(.title3)
+                            }
+
+                            Button(action: { showingRemoteSheet = true }) {
+                                Image(systemName: "slider.horizontal.3")
+                                    .font(.title3)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color(uiColor: .secondarySystemBackground))
+                        .onTapGesture {
+                            showingRemoteSheet = true
+                        }
+                    }
+
                     Divider()
 
                     // Bottom Navigation Toolbar
@@ -103,7 +145,13 @@ struct ContentView: View {
                         Spacer()
 
                         // Stream Detection & Cast Trigger Button
-                        Button(action: { showingDetectedStreamsSheet = true }) {
+                        Button(action: {
+                            if CastSessionManager.shared.playbackState.status == .playing || CastSessionManager.shared.playbackState.status == .paused {
+                                showingRemoteSheet = true
+                            } else {
+                                showingDetectedStreamsSheet = true
+                            }
+                        }) {
                             ZStack(alignment: .topTrailing) {
                                 Image(systemName: viewModel.detectedStreams.isEmpty ? "tv" : "tv.badge.wifi.fill")
                                     .foregroundColor(viewModel.detectedStreams.isEmpty ? .primary : .accentColor)
@@ -149,12 +197,25 @@ struct ContentView: View {
                     DetectedStreamsSheet(
                         streams: viewModel.detectedStreams,
                         subtitles: viewModel.detectedSubtitles,
-                        onCastStream: { stream in
-                            // Preparing for Step 4 Casting Layer
-                            print("Selected stream to cast: \(stream.url)")
+                        onCastStream: { stream, device in
+                            Task {
+                                let cookies = await viewModel.activeWebView?.configuration.websiteDataStore.httpCookieStore.allCookies() ?? []
+                                let pageUrl = viewModel.activeWebView?.url
+                                await CastSessionManager.shared.cast(
+                                    stream: stream,
+                                    to: device,
+                                    pageUrl: pageUrl,
+                                    cookies: cookies
+                                )
+                                showingRemoteSheet = true
+                            }
                         }
                     )
                     .presentationDetents([.fraction(0.4), .medium, .large])
+                }
+                .sheet(isPresented: $showingRemoteSheet) {
+                    CastRemoteSheet()
+                        .presentationDetents([.medium, .large])
                 }
             } else {
                 ProgressView("Starting Browser...")
@@ -162,6 +223,7 @@ struct ContentView: View {
                         let vm = BrowserViewModel()
                         let repo = DataRepository(modelContext: modelContext)
                         vm.setRepository(repo)
+                        CastSessionManager.shared.setRepository(repo)
 
                         let currentTabs = repo.getTabs()
                         if let activeTab = currentTabs.first(where: { $0.isActive }) ?? currentTabs.first {
