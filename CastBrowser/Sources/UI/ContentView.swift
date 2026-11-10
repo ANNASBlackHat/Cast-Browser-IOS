@@ -4,100 +4,210 @@
 //
 
 import SwiftUI
+import SwiftData
+import WebKit
 
 struct ContentView: View {
-    @State private var urlInput: String = "https://www.google.com"
-    @State private var activeTabTitle: String = "New Tab"
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \TabItem.orderIndex) private var tabs: [TabItem]
+
+    @State private var viewModel: BrowserViewModel?
+    @State private var showingTabsSheet = false
+    @State private var urlBarFocused = false
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Top Search / Location Bar
-                HStack(spacing: 12) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
+            if let viewModel {
+                VStack(spacing: 0) {
+                    // Top Search / Location Bar
+                    HStack(spacing: 12) {
+                        Image(systemName: "lock.fill")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
 
-                    TextField("Search or enter website name", text: $urlInput)
-                        .textFieldStyle(.plain)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
+                        @Bindable var bindableVM = viewModel
+                        TextField("Search or enter website name", text: $bindableVM.currentUrlText)
+                            .textFieldStyle(.plain)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.URL)
+                            .onSubmit {
+                                viewModel.load(input: viewModel.currentUrlText)
+                            }
 
-                    if !urlInput.isEmpty {
-                        Button(action: { urlInput = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
+                        if viewModel.isLoading {
+                            Button(action: { viewModel.activeWebView?.stopLoading() }) {
+                                Image(systemName: "xmark")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.secondary)
+                            }
+                        } else {
+                            Button(action: { viewModel.reload() }) {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(10)
+                    .background(Color(uiColor: .secondarySystemBackground))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+
+                    // Loading progress bar
+                    if viewModel.isLoading {
+                        ProgressView(value: viewModel.estimatedProgress, total: 1.0)
+                            .progressViewStyle(LinearProgressViewStyle())
+                            .frame(height: 2)
+                    } else {
+                        Divider()
+                    }
+
+                    // Main Browser Area
+                    ZStack {
+                        if let webView = viewModel.activeWebView {
+                            BrowserWebViewRepresentable(webView: webView)
+                                .ignoresSafeArea(.keyboard, edges: .bottom)
+                        } else {
+                            VStack(spacing: 16) {
+                                Spacer()
+                                ProgressView()
+                                Text("Loading Tab...")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                        }
+                    }
+
+                    Divider()
+
+                    // Bottom Navigation Toolbar
+                    HStack {
+                        Button(action: { viewModel.goBack() }) {
+                            Image(systemName: "chevron.backward")
+                        }
+                        .disabled(!viewModel.canGoBack)
+
+                        Spacer()
+
+                        Button(action: { viewModel.goForward() }) {
+                            Image(systemName: "chevron.forward")
+                        }
+                        .disabled(!viewModel.canGoForward)
+
+                        Spacer()
+
+                        Button(action: {}) {
+                            Image(systemName: "airplayvideo")
+                        }
+
+                        Spacer()
+
+                        Button(action: {}) {
+                            Image(systemName: "clock")
+                        }
+
+                        Spacer()
+
+                        Button(action: { showingTabsSheet = true }) {
+                            HStack(spacing: 2) {
+                                Image(systemName: "square.on.square")
+                                if !tabs.isEmpty {
+                                    Text("\(tabs.count)")
+                                        .font(.caption2.bold())
+                                }
+                            }
+                        }
+                    }
+                    .font(.title3)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(.ultraThinMaterial)
+                }
+                .navigationTitle(viewModel.currentTitle)
+                .navigationBarTitleDisplayMode(.inline)
+            } else {
+                ProgressView("Starting Browser...")
+                    .task {
+                        let vm = BrowserViewModel()
+                        let repo = DataRepository(modelContext: modelContext)
+                        vm.setRepository(repo)
+
+                        let currentTabs = repo.getTabs()
+                        if let activeTab = currentTabs.first(where: { $0.isActive }) ?? currentTabs.first {
+                            await vm.activateTab(
+                                id: activeTab.id,
+                                urlString: activeTab.urlString,
+                                title: activeTab.title
+                            )
+                        }
+                        self.viewModel = vm
+                    }
+            }
+        }
+        .sheet(isPresented: $showingTabsSheet) {
+            NavigationStack {
+                List {
+                    ForEach(tabs) { tab in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(tab.title)
+                                    .font(.headline)
+                                    .lineLimit(1)
+                                Text(tab.urlString)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+                            Spacer()
+                            if tab.isActive {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            guard let viewModel else { return }
+                            Task {
+                                let repo = DataRepository(modelContext: modelContext)
+                                repo.setActiveTab(id: tab.id)
+                                await viewModel.activateTab(id: tab.id, urlString: tab.urlString, title: tab.title)
+                                showingTabsSheet = false
+                            }
+                        }
+                    }
+                    .onDelete { indexSet in
+                        let repo = DataRepository(modelContext: modelContext)
+                        for index in indexSet {
+                            repo.closeTab(id: tabs[index].id)
                         }
                     }
                 }
-                .padding(10)
-                .background(Color(uiColor: .secondarySystemBackground))
-                .cornerRadius(12)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-
-                Divider()
-
-                // Main Content View
-                VStack(spacing: 16) {
-                    Spacer()
-                    Image(systemName: "tv.and.mediabox")
-                        .font(.system(size: 64))
-                        .foregroundColor(.accentColor)
-
-                    Text("CastBrowser iOS")
-                        .font(.title2.bold())
-
-                    Text("Browse any streaming site and cast video directly to AirPlay or DLNA TVs.")
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal, 32)
-
-                    Spacer()
-                }
-
-                Divider()
-
-                // Bottom Navigation Toolbar
-                HStack {
-                    Button(action: {}) {
-                        Image(systemName: "chevron.backward")
+                .navigationTitle("Tabs (\(tabs.count))")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Done") {
+                            showingTabsSheet = false
+                        }
                     }
-                    .disabled(true)
-
-                    Spacer()
-
-                    Button(action: {}) {
-                        Image(systemName: "chevron.forward")
-                    }
-                    .disabled(true)
-
-                    Spacer()
-
-                    Button(action: {}) {
-                        Image(systemName: "airplayvideo")
-                    }
-
-                    Spacer()
-
-                    Button(action: {}) {
-                        Image(systemName: "clock")
-                    }
-
-                    Spacer()
-
-                    Button(action: {}) {
-                        Image(systemName: "square.on.square")
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            guard let viewModel else { return }
+                            Task {
+                                let repo = DataRepository(modelContext: modelContext)
+                                let newTab = repo.createTab()
+                                await viewModel.activateTab(id: newTab.id, urlString: newTab.urlString, title: newTab.title)
+                                showingTabsSheet = false
+                            }
+                        }) {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
-                .font(.title3)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(.ultraThinMaterial)
             }
-            .navigationTitle(activeTabTitle)
-            .navigationBarTitleDisplayMode(.inline)
+            .presentationDetents([.medium, .large])
         }
     }
 }

@@ -1,0 +1,58 @@
+[
+  {
+    "trigger": {
+      "url-filter": ".*",
+      "if-domain": [
+        "*doubleclick.net",
+        "*googlesyndication.com",
+        "*popads.net",
+        "*popcash.net",
+        "*propellerads.com",
+        "*exoclick.com",
+        "*adsterra.com",
+        "*monetag.com",
+        "*juicyads.com",
+        "*trafficjunky.com",
+        "*outbrain.com",
+        "*taboola.com",
+        "*criteo.com",
+        "*rubiconproject.com",
+        "*openx.net",
+        "*pubmatic.com",
+        "*yieldmo.com",
+        "*bet365.com",
+        "*1xbet.com",
+        "*onclickpredictiv.com",
+        "*onclickperformance.com",
+        "*deloton.com",
+        "*alwingulla.com",
+        "*wigetmedia.com",
+        "*hilltopads.net",
+        "*clickadu.com",
+        "*clickaine.com",
+        "*adcash.com",
+        "*bidvertiser.com",
+        "*ero-advertising.com",
+        "*trafficstars.com",
+        "*plugrush.com",
+        "*richpush.co",
+        "*evadav.com",
+        "*rollerads.com",
+        "*yengo.com",
+        "*mgid.com",
+        "*trackvoluum.com"
+      ]
+    },
+    "action": {
+      "type": "block"
+    }
+  },
+  {
+    "trigger": {
+      "url-filter": "^(intent|market|itms-appss|itms-services)://.*"
+    },
+    "action": {
+      "type": "block"
+    }
+  }
+]
