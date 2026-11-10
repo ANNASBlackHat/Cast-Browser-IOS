@@ -17,8 +17,13 @@ public final class WKWebViewPool {
 
     private let sharedProcessPool = WKProcessPool()
     private var baseConfiguration: WKWebViewConfiguration?
+    private var scriptBridgeHandler: WeakScriptMessageHandler?
 
     private init() {}
+
+    public func setScriptBridgeDelegate(_ delegate: ScriptBridgeDelegate) {
+        self.scriptBridgeHandler = WeakScriptMessageHandler(delegate: delegate)
+    }
 
     public func getOrCreateWebView(for tabId: UUID, initialUrl: URL? = nil) async -> WKWebView {
         // Return existing cached view if available
@@ -32,7 +37,7 @@ public final class WKWebViewPool {
             evictOldest()
         }
 
-        // Build configuration with content blocker rules
+        // Build configuration with content blocker rules & detector script
         let configuration = await getBaseConfiguration()
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.allowsBackForwardNavigationGestures = true
@@ -100,9 +105,25 @@ public final class WKWebViewPool {
 
         let userContentController = WKUserContentController()
 
-        // Attach native Safari content-blocking rule list
+        // 1. Attach native Safari content-blocking rule list
         if let ruleList = await ContentBlockerManager.shared.getOrCompileRules() {
             userContentController.add(ruleList)
+        }
+
+        // 2. Attach video detector user script across all frames (.atDocumentStart)
+        if let scriptUrl = Bundle.main.url(forResource: "video_detector", withExtension: "js"),
+           let scriptSource = try? String(contentsOf: scriptUrl, encoding: .utf8) {
+            let userScript = WKUserScript(
+                source: scriptSource,
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: false
+            )
+            userContentController.addUserScript(userScript)
+        }
+
+        // 3. Register message handler for castBrowserBridge
+        if let handler = scriptBridgeHandler {
+            userContentController.add(handler, name: "castBrowserBridge")
         }
 
         config.userContentController = userContentController

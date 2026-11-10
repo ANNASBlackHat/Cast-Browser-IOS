@@ -13,6 +13,7 @@ struct ContentView: View {
 
     @State private var viewModel: BrowserViewModel?
     @State private var showingTabsSheet = false
+    @State private var showingDetectedStreamsSheet = false
     @FocusState private var isUrlFieldFocused: Bool
 
     var body: some View {
@@ -101,8 +102,22 @@ struct ContentView: View {
 
                         Spacer()
 
-                        Button(action: {}) {
-                            Image(systemName: "airplayvideo")
+                        // Stream Detection & Cast Trigger Button
+                        Button(action: { showingDetectedStreamsSheet = true }) {
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: viewModel.detectedStreams.isEmpty ? "tv" : "tv.badge.wifi.fill")
+                                    .foregroundColor(viewModel.detectedStreams.isEmpty ? .primary : .accentColor)
+
+                                if !viewModel.detectedStreams.isEmpty {
+                                    Text("\(viewModel.detectedStreams.count)")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(3)
+                                        .background(Color.blue)
+                                        .clipShape(Circle())
+                                        .offset(x: 10, y: -8)
+                                }
+                            }
                         }
 
                         Spacer()
@@ -130,6 +145,17 @@ struct ContentView: View {
                 }
                 .navigationTitle(viewModel.currentTitle)
                 .navigationBarTitleDisplayMode(.inline)
+                .sheet(isPresented: $showingDetectedStreamsSheet) {
+                    DetectedStreamsSheet(
+                        streams: viewModel.detectedStreams,
+                        subtitles: viewModel.detectedSubtitles,
+                        onCastStream: { stream in
+                            // Preparing for Step 4 Casting Layer
+                            print("Selected stream to cast: \(stream.url)")
+                        }
+                    )
+                    .presentationDetents([.fraction(0.4), .medium, .large])
+                }
             } else {
                 ProgressView("Starting Browser...")
                     .task {
@@ -162,7 +188,7 @@ struct ContentView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
-                        }
+                            }
                             Spacer()
                             if tab.isActive {
                                 Image(systemName: "checkmark.circle.fill")

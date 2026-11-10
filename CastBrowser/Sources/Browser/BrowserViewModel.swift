@@ -8,7 +8,7 @@ import SwiftUI
 import WebKit
 
 @Observable
-public final class BrowserViewModel: CastNavigationDelegateHandler {
+public final class BrowserViewModel: CastNavigationDelegateHandler, ScriptBridgeDelegate {
     @MainActor public var currentTabId: UUID?
     @MainActor public var currentUrlText: String = ""
     @MainActor public var currentTitle: String = "New Tab"
@@ -18,12 +18,17 @@ public final class BrowserViewModel: CastNavigationDelegateHandler {
     @MainActor public var canGoForward: Bool = false
     @MainActor public var activeWebView: WKWebView?
 
+    // Stream detection
+    @MainActor public var detectedStreams: [DetectedStream] = []
+    @MainActor public var detectedSubtitles: [DetectedSubtitle] = []
+
     private let navigationDelegate: CastNavigationDelegate
     private var repository: DataRepository?
 
     public init() {
         self.navigationDelegate = CastNavigationDelegate()
         self.navigationDelegate.handler = self
+        WKWebViewPool.shared.setScriptBridgeDelegate(self)
     }
 
     @MainActor
@@ -43,6 +48,10 @@ public final class BrowserViewModel: CastNavigationDelegateHandler {
         self.currentUrlText = urlString
         self.currentTitle = title
 
+        // Refresh streams for selected tab
+        self.detectedStreams = StreamCandidateManager.shared.streams(for: id)
+        self.detectedSubtitles = StreamCandidateManager.shared.subtitles(for: id)
+
         let initialUrl = URL(string: urlString)
         let webView = await WKWebViewPool.shared.getOrCreateWebView(for: id, initialUrl: initialUrl)
 
@@ -56,6 +65,7 @@ public final class BrowserViewModel: CastNavigationDelegateHandler {
     @MainActor
     public func closeTab(id: UUID) async {
         WKWebViewPool.shared.removeWebView(for: id)
+        StreamCandidateManager.shared.clearStreams(for: id)
         guard let repository else { return }
 
         repository.closeTab(id: id)
@@ -69,6 +79,8 @@ public final class BrowserViewModel: CastNavigationDelegateHandler {
                 currentTabId = nil
                 currentUrlText = ""
                 currentTitle = "New Tab"
+                detectedStreams = []
+                detectedSubtitles = []
             }
         }
     }
@@ -167,5 +179,44 @@ public final class BrowserViewModel: CastNavigationDelegateHandler {
         guard tabId == currentTabId else { return }
         self.isLoading = false
         updateNavigationState()
+    }
+
+    // MARK: - ScriptBridgeDelegate
+
+    @MainActor
+    public func didDetectStreamCandidate(url: URL, pageUrl: URL, title: String) {
+        guard let tabId = currentTabId else { return }
+        Task { @MainActor in
+            await StreamCandidateManager.shared.registerCandidate(
+                url: url,
+                pageUrl: pageUrl,
+                title: title.isEmpty ? currentTitle : title,
+                for: tabId
+            )
+            self.detectedStreams = StreamCandidateManager.shared.streams(for: tabId)
+        }
+    }
+
+    @MainActor
+    public func didDetectSubtitleCandidate(url: URL, label: String, language: String) {
+        guard let tabId = currentTabId else { return }
+        StreamCandidateManager.shared.registerSubtitle(
+            url: url,
+            label: label,
+            language: language,
+            for: tabId
+        )
+        self.detectedSubtitles = StreamCandidateManager.shared.subtitles(for: tabId)
+    }
+
+    @MainActor
+    public func didUpdatePlaybackProgress(currentTime: Double, duration: Double, url: String, title: String, pageUrl: String) {
+        repository?.saveWatchProgress(
+            pageUrl: pageUrl,
+            streamUrl: url,
+            rawTitle: title.isEmpty ? currentTitle : title,
+            positionSeconds: currentTime,
+            durationSeconds: duration
+        )
     }
 }
