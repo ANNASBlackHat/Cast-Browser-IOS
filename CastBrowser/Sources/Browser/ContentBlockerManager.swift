@@ -10,7 +10,7 @@ public actor ContentBlockerManager {
     public static let shared = ContentBlockerManager()
 
     private var compiledRuleList: WKContentRuleList?
-    private let ruleListIdentifier = "CastBrowserAdBlockRules"
+    private let ruleListIdentifier = "CastBrowserAdBlockRules_v2"
 
     private init() {}
 
@@ -28,7 +28,7 @@ public actor ContentBlockerManager {
         // Load JSON rules from bundle
         guard let url = Bundle.main.url(forResource: "AdBlockRules", withExtension: "json"),
               let jsonString = try? String(contentsOf: url, encoding: .utf8) else {
-            print("[ContentBlocker] AdBlockRules.json not found in bundle, using default rules.")
+            print("[ContentBlocker] AdBlockRules.json not found in bundle, using fallback.")
             let fallbackRules = """
             [
               {"trigger": {"url-filter": ".*doubleclick.net.*"}, "action": {"type": "block"}},

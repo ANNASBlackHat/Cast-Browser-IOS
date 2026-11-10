@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import UIKit
 import WebKit
 
 @MainActor
@@ -37,12 +38,16 @@ public final class WKWebViewPool {
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.contentInsetAdjustmentBehavior = .automatic
 
-        // Set modern desktop/tablet Safari user agent to ensure full video player availability
-        webView.customUserAgent = "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1"
+        // Device-appropriate User Agent: Desktop Safari UA on iPad, default Safari UA on iPhone
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            webView.customUserAgent = "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1"
+        }
 
         webView.uiDelegate = CastUIDelegate.shared
 
-        if let initialUrl {
+        // Attempt restoring interactionState (history & scroll position) from disk
+        let restored = TabStateManager.shared.restoreState(for: tabId, into: webView)
+        if !restored, let initialUrl {
             webView.load(URLRequest(url: initialUrl))
         }
 
@@ -58,6 +63,7 @@ public final class WKWebViewPool {
             view.navigationDelegate = nil
         }
         lruOrder.removeAll(where: { $0 == tabId })
+        TabStateManager.shared.deleteState(for: tabId)
     }
 
     public func existingWebView(for tabId: UUID) -> WKWebView? {
@@ -71,7 +77,15 @@ public final class WKWebViewPool {
 
     private func evictOldest() {
         guard let oldestId = lruOrder.first else { return }
-        removeWebView(for: oldestId)
+        if let webView = liveViews[oldestId] {
+            // Save state before deallocating
+            TabStateManager.shared.saveState(for: oldestId, from: webView)
+            webView.stopLoading()
+            webView.uiDelegate = nil
+            webView.navigationDelegate = nil
+            liveViews.removeValue(forKey: oldestId)
+        }
+        lruOrder.removeFirst()
     }
 
     private func getBaseConfiguration() async -> WKWebViewConfiguration {

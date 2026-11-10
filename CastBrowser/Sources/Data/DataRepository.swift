@@ -124,7 +124,10 @@ public final class DataRepository {
                 entry.season = parsed.season
                 entry.episode = parsed.episode
                 entry.positionSeconds = positionSeconds
-                entry.durationSeconds = durationSeconds
+                // Guard: Only update duration if > 0 to prevent buffering from erasing real duration
+                if durationSeconds > 0 {
+                    entry.durationSeconds = durationSeconds
+                }
                 entry.finished = isFinished
                 entry.lastWatchedAt = Date()
             } else {
@@ -173,5 +176,49 @@ public final class DataRepository {
         } catch {
             print("Failed to clear history: \(error)")
         }
+    }
+
+    // MARK: - Bookmarks
+
+    public func getBookmarks() -> [BookmarkItem] {
+        let descriptor = FetchDescriptor<BookmarkItem>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
+        return (try? modelContext.fetch(descriptor)) ?? []
+    }
+
+    public func addBookmark(urlString: String, title: String) {
+        let bookmark = BookmarkItem(urlString: urlString, title: title)
+        modelContext.insert(bookmark)
+        try? modelContext.save()
+    }
+
+    public func deleteBookmark(id: UUID) {
+        var descriptor = FetchDescriptor<BookmarkItem>(predicate: #Predicate { $0.id == id })
+        if let item = try? modelContext.fetch(descriptor).first {
+            modelContext.delete(item)
+            try? modelContext.save()
+        }
+    }
+
+    // MARK: - Cast Devices
+
+    public func recordCastDevice(id: String, name: String, model: String?, locationUrl: String?, protocolType: String) {
+        var descriptor = FetchDescriptor<CastDeviceItem>(predicate: #Predicate { $0.id == id })
+        if let existing = try? modelContext.fetch(descriptor).first {
+            existing.friendlyName = name
+            existing.modelName = model
+            existing.locationUrl = locationUrl
+            existing.protocolType = protocolType
+            existing.lastSeenAt = Date()
+        } else {
+            let device = CastDeviceItem(id: id, friendlyName: name, modelName: model, locationUrl: locationUrl, protocolType: protocolType)
+            modelContext.insert(device)
+        }
+        try? modelContext.save()
+    }
+
+    public func getRecentCastDevices(limit: Int = 5) -> [CastDeviceItem] {
+        var descriptor = FetchDescriptor<CastDeviceItem>(sortBy: [SortDescriptor(\.lastSeenAt, order: .reverse)])
+        descriptor.fetchLimit = limit
+        return (try? modelContext.fetch(descriptor)) ?? []
     }
 }

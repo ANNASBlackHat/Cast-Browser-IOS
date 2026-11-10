@@ -150,9 +150,21 @@ public enum EpisodeTitleParser {
         let nsTitle = fullTitle as NSString
         let prefix = nsTitle.substring(to: matchRange.location)
         var cleaned = prefix.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        // Strip trailing separators like - : _
         cleaned = cleaned.trimmingCharacters(in: CharacterSet(charactersIn: " -:_|,/"))
-        return cleaned
+
+        // If prefix is non-empty, return it
+        if !cleaned.isEmpty {
+            return cleaned
+        }
+
+        // Suffix fallback: if title starts with the episode tag (e.g. "S01E01 - Pilot Episode")
+        let suffixStart = matchRange.location + matchRange.length
+        if suffixStart < nsTitle.length {
+            let suffix = nsTitle.substring(from: suffixStart)
+            let cleanedSuffix = suffix.trimmingCharacters(in: CharacterSet(charactersIn: " -:_|,/"))
+            return cleanedSuffix.isEmpty ? fullTitle : cleanedSuffix
+        }
+
+        return fullTitle
     }
 }

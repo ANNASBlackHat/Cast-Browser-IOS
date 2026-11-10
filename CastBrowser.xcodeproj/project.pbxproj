@@ -20,6 +20,7 @@
 		9BF643079A4147C3FE7B388D /* WatchEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3274B68A589CD2F9795CB52 /* WatchEntry.swift */; };
 		A10000012CE0000100000001 /* CastBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012CE0000100000001 /* CastBrowserApp.swift */; };
 		A10000022CE0000100000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000022CE0000100000002 /* ContentView.swift */; };
+		CD674667821F294CC64AA2AE /* TabStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35284E0EABA851A1833291C3 /* TabStateManager.swift */; };
 		D678465AA1D2F1A3234672C3 /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B48410D9B9B131306273807 /* TabItem.swift */; };
 		D8FB42C59B4F004D899A5C0D /* ContentBlockerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A74DB4A7EAA52BD5AEBBCD /* ContentBlockerManager.swift */; };
 /* End PBXBuildFile section */
@@ -27,6 +28,7 @@
 /* Begin PBXFileReference section */
 		04724FCF8F884F8E4F70415A /* CastWebViewDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastWebViewDelegates.swift; path = CastBrowser/Sources/Browser/CastWebViewDelegates.swift; sourceTree = SOURCE_ROOT; };
 		0B48410D9B9B131306273807 /* TabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabItem.swift; path = CastBrowser/Sources/Data/Models/TabItem.swift; sourceTree = SOURCE_ROOT; };
+		35284E0EABA851A1833291C3 /* TabStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabStateManager.swift; path = CastBrowser/Sources/Browser/TabStateManager.swift; sourceTree = SOURCE_ROOT; };
 		41E946049B54B0E7671E1084 /* WKWebViewPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WKWebViewPool.swift; path = CastBrowser/Sources/Browser/WKWebViewPool.swift; sourceTree = SOURCE_ROOT; };
 		46C541DF9BE14B568818398A /* BookmarkItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookmarkItem.swift; path = CastBrowser/Sources/Data/Models/BookmarkItem.swift; sourceTree = SOURCE_ROOT; };
 		572E4E5A9CA54AA014FEF1B6 /* AdBlockRules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = AdBlockRules.json; path = CastBrowser/Resources/AdBlockRules.json; sourceTree = SOURCE_ROOT; };
@@ -73,6 +75,7 @@
 				41E946049B54B0E7671E1084 /* WKWebViewPool.swift */,
 				62A549B89FAA8897166E5D0C /* BrowserWebViewRepresentable.swift */,
 				B38244738DBDD5842A0635E2 /* BrowserViewModel.swift */,
+				35284E0EABA851A1833291C3 /* TabStateManager.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -208,6 +211,7 @@
 				04014E699053F7E52D3C069D /* WKWebViewPool.swift in Sources */,
 				2DC245F085473754642DE878 /* BrowserWebViewRepresentable.swift in Sources */,
 				4E7D4BD0B70D3B98285EC181 /* BrowserViewModel.swift in Sources */,
+				CD674667821F294CC64AA2AE /* TabStateManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

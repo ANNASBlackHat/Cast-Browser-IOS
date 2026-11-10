@@ -13,7 +13,7 @@ struct ContentView: View {
 
     @State private var viewModel: BrowserViewModel?
     @State private var showingTabsSheet = false
-    @State private var urlBarFocused = false
+    @FocusState private var isUrlFieldFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -31,6 +31,7 @@ struct ContentView: View {
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.never)
                             .keyboardType(.URL)
+                            .focused($isUrlFieldFocused)
                             .onSubmit {
                                 viewModel.load(input: viewModel.currentUrlText)
                             }
@@ -64,10 +65,11 @@ struct ContentView: View {
                         Divider()
                     }
 
-                    // Main Browser Area
+                    // Main Browser Area (with explicit view identity to ensure instant tab switching)
                     ZStack {
                         if let webView = viewModel.activeWebView {
                             BrowserWebViewRepresentable(webView: webView)
+                                .id(viewModel.currentTabId)
                                 .ignoresSafeArea(.keyboard, edges: .bottom)
                         } else {
                             VStack(spacing: 16) {
@@ -160,7 +162,7 @@ struct ContentView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
-                            }
+                        }
                             Spacer()
                             if tab.isActive {
                                 Image(systemName: "checkmark.circle.fill")
@@ -179,9 +181,11 @@ struct ContentView: View {
                         }
                     }
                     .onDelete { indexSet in
-                        let repo = DataRepository(modelContext: modelContext)
-                        for index in indexSet {
-                            repo.closeTab(id: tabs[index].id)
+                        guard let viewModel else { return }
+                        Task {
+                            for index in indexSet {
+                                await viewModel.closeTab(id: tabs[index].id)
+                            }
                         }
                     }
                 }
