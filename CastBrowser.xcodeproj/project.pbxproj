@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,7 @@
 		04014E699053F7E52D3C069D /* WKWebViewPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E946049B54B0E7671E1084 /* WKWebViewPool.swift */; };
 		04AC4DB5A5754BBB3C6B7D6F /* DlnaSoapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0D4B0D81D4B6F637397526 /* DlnaSoapHelper.swift */; };
 		090C42909E8C73F26F98B669 /* BookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E3479D91BB7223BDF2B4E7 /* BookmarksView.swift */; };
+		099546FCA4F8C80DF3AAB861 /* VideoPreviewPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24F412C9FE5D05C9222E3B8 /* VideoPreviewPlayerView.swift */; };
 		0A4440F092C839AAA31DB193 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF64A07B813E26D64A9C649 /* HistoryView.swift */; };
 		1B2F441C91DDCA9C18993315 /* DetectedSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5924F1EA053AB94552E2700 /* DetectedSubtitle.swift */; };
 		1CE94F1C8CD495F44BE93A4C /* ContinueWatchingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1C4E83B25C073C077A4C19 /* ContinueWatchingCard.swift */; };
@@ -43,6 +44,7 @@
 		C6A04C1DA0F1EAFFA1BA7A50 /* LocalHttpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59474517B9986EF0E4281A70 /* LocalHttpServer.swift */; };
 		CD674667821F294CC64AA2AE /* TabStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35284E0EABA851A1833291C3 /* TabStateManager.swift */; };
 		D00E422A9C2E489EDEF2ECC9 /* AirPlayRoutePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4B4193ACD9A58EE8AD7A8F /* AirPlayRoutePicker.swift */; };
+		D3184EC0A5F73609DCCC9BF5 /* CastDevicePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0747FEA718EC7DB51DC6ED /* CastDevicePickerSheet.swift */; };
 		D47C419CA02416C22794E79A /* ProxyStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25C4C5EB730DA98BEB484C3 /* ProxyStreamManager.swift */; };
 		D678465AA1D2F1A3234672C3 /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B48410D9B9B131306273807 /* TabItem.swift */; };
 		D8FB42C59B4F004D899A5C0D /* ContentBlockerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A74DB4A7EAA52BD5AEBBCD /* ContentBlockerManager.swift */; };
@@ -67,6 +69,7 @@
 		572E4E5A9CA54AA014FEF1B6 /* AdBlockRules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = AdBlockRules.json; path = CastBrowser/Resources/AdBlockRules.json; sourceTree = SOURCE_ROOT; };
 		59474517B9986EF0E4281A70 /* LocalHttpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalHttpServer.swift; path = CastBrowser/Sources/Proxy/LocalHttpServer.swift; sourceTree = SOURCE_ROOT; };
 		5A1C4E83B25C073C077A4C19 /* ContinueWatchingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContinueWatchingCard.swift; path = CastBrowser/Sources/UI/Components/ContinueWatchingCard.swift; sourceTree = SOURCE_ROOT; };
+		5D0747FEA718EC7DB51DC6ED /* CastDevicePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastDevicePickerSheet.swift; path = CastBrowser/Sources/UI/CastDevicePickerSheet.swift; sourceTree = SOURCE_ROOT; };
 		62A549B89FAA8897166E5D0C /* BrowserWebViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BrowserWebViewRepresentable.swift; path = CastBrowser/Sources/Browser/BrowserWebViewRepresentable.swift; sourceTree = SOURCE_ROOT; };
 		71AA4CE2AD1CD3F3857B5E11 /* HlsPlaylistRewriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HlsPlaylistRewriter.swift; path = CastBrowser/Sources/Proxy/HlsPlaylistRewriter.swift; sourceTree = SOURCE_ROOT; };
 		7B6141D1A39272C398DB4D31 /* CastDeviceItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastDeviceItem.swift; path = CastBrowser/Sources/Data/Models/CastDeviceItem.swift; sourceTree = SOURCE_ROOT; };
@@ -81,6 +84,7 @@
 		A51A4ED498B01AA514F41EB6 /* HistoryVisit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HistoryVisit.swift; path = CastBrowser/Sources/Data/Models/HistoryVisit.swift; sourceTree = SOURCE_ROOT; };
 		A5E44C13B7392A3318965CB9 /* HomeContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeContinueWatchingView.swift; path = CastBrowser/Sources/UI/Home/HomeContinueWatchingView.swift; sourceTree = SOURCE_ROOT; };
 		AC0D4B0D81D4B6F637397526 /* DlnaSoapHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DlnaSoapHelper.swift; path = CastBrowser/Sources/Cast/DLNA/DlnaSoapHelper.swift; sourceTree = SOURCE_ROOT; };
+		B24F412C9FE5D05C9222E3B8 /* VideoPreviewPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VideoPreviewPlayerView.swift; path = CastBrowser/Sources/UI/VideoPreviewPlayerView.swift; sourceTree = SOURCE_ROOT; };
 		B38244738DBDD5842A0635E2 /* BrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BrowserViewModel.swift; path = CastBrowser/Sources/Browser/BrowserViewModel.swift; sourceTree = SOURCE_ROOT; };
 		C23343FFAA5CF74BDE807FB1 /* StreamProbeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreamProbeService.swift; path = CastBrowser/Sources/Detect/StreamProbeService.swift; sourceTree = SOURCE_ROOT; };
 		C25C4C5EB730DA98BEB484C3 /* ProxyStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProxyStreamManager.swift; path = CastBrowser/Sources/Proxy/ProxyStreamManager.swift; sourceTree = SOURCE_ROOT; };
@@ -151,6 +155,8 @@
 				FAF64A07B813E26D64A9C649 /* HistoryView.swift */,
 				F1E3479D91BB7223BDF2B4E7 /* BookmarksView.swift */,
 				A5E44C13B7392A3318965CB9 /* HomeContinueWatchingView.swift */,
+				5D0747FEA718EC7DB51DC6ED /* CastDevicePickerSheet.swift */,
+				B24F412C9FE5D05C9222E3B8 /* VideoPreviewPlayerView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -312,6 +318,8 @@
 				0A4440F092C839AAA31DB193 /* HistoryView.swift in Sources */,
 				090C42909E8C73F26F98B669 /* BookmarksView.swift in Sources */,
 				020A4ACDB5295495BB611528 /* HomeContinueWatchingView.swift in Sources */,
+				D3184EC0A5F73609DCCC9BF5 /* CastDevicePickerSheet.swift in Sources */,
+				099546FCA4F8C80DF3AAB861 /* VideoPreviewPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +448,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8QL8UA4H2Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = CastBrowser/Resources/Info.plist;
@@ -463,6 +472,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8QL8UA4H2Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = CastBrowser/Resources/Info.plist;

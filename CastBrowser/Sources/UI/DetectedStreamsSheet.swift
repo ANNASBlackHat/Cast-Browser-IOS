@@ -12,12 +12,11 @@ struct DetectedStreamsSheet: View {
     let onCastStream: (DetectedStream, CastDevice?) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var previewPlayer: AVPlayer?
-    @State private var showingLocalPlayer = false
+    @State private var showingPreviewPlayer = false
     @State private var activeStreamForPlayer: DetectedStream?
-    @State private var copiedUrl: String?
-    @State private var showingDeviceSelector = false
+    @State private var showingDevicePicker = false
     @State private var selectedStreamForCasting: DetectedStream?
+    @State private var copiedUrl: String?
 
     var body: some View {
         NavigationStack {
@@ -73,21 +72,20 @@ struct DetectedStreamsSheet: View {
                                     .lineLimit(1)
 
                                 HStack(spacing: 12) {
-                                    // 1. Cast Button
+                                    // 1. Cast Button - Opens full device picker sheet
                                     Button(action: {
                                         selectedStreamForCasting = stream
-                                        showingDeviceSelector = true
+                                        showingDevicePicker = true
                                     }) {
                                         Label("Cast to TV", systemImage: "tv")
                                             .font(.subheadline.bold())
                                     }
                                     .buttonStyle(.borderedProminent)
 
-                                    // 2. Local Preview / PiP Button
+                                    // 2. Local Preview / PiP Button - Opens VideoPreviewPlayerView with visible Close button
                                     Button(action: {
                                         activeStreamForPlayer = stream
-                                        previewPlayer = AVPlayer(url: stream.url)
-                                        showingLocalPlayer = true
+                                        showingPreviewPlayer = true
                                     }) {
                                         Label("Preview", systemImage: "play.circle")
                                             .font(.subheadline)
@@ -144,39 +142,22 @@ struct DetectedStreamsSheet: View {
                     }
                 }
             }
-            .confirmationDialog("Choose Casting Device", isPresented: $showingDeviceSelector, titleVisibility: .visible) {
-                Button("AirPlay 2 (Apple TV / Roku / Smart TV)") {
-                    if let stream = selectedStreamForCasting {
-                        onCastStream(stream, nil)
+            .sheet(isPresented: $showingDevicePicker) {
+                if let stream = selectedStreamForCasting {
+                    CastDevicePickerSheet(stream: stream) { device in
+                        onCastStream(stream, device)
                         dismiss()
                     }
+                    .presentationDetents([.medium, .large])
                 }
-
-                ForEach(CastSessionManager.shared.availableDlnaDevices) { device in
-                    Button("\(device.name) (DLNA)") {
-                        if let stream = selectedStreamForCasting {
-                            onCastStream(stream, device)
-                            dismiss()
-                        }
+            }
+            .fullScreenCover(isPresented: $showingPreviewPlayer) {
+                if let stream = activeStreamForPlayer {
+                    VideoPreviewPlayerView(stream: stream) {
+                        selectedStreamForCasting = stream
+                        showingDevicePicker = true
                     }
                 }
-
-                Button("Cancel", role: .cancel) {}
-            }
-            .fullScreenCover(isPresented: $showingLocalPlayer, onDismiss: {
-                previewPlayer?.pause()
-                previewPlayer = nil
-            }) {
-                if let previewPlayer {
-                    VideoPlayer(player: previewPlayer)
-                        .ignoresSafeArea()
-                        .onAppear {
-                            previewPlayer.play()
-                        }
-                }
-            }
-            .task {
-                await CastSessionManager.shared.refreshDlnaDevices()
             }
         }
     }
