@@ -55,11 +55,20 @@ public actor ProxyStreamManager {
     }
 }
 
+public struct WifiNetworkInfo: Sendable {
+    public let ip: String
+    public let netmask: String
+    public let broadcastIp: String
+    public let prefix: String // e.g. "192.168.1"
+}
+
 public enum NetworkIpHelper {
     public static func getLocalIpAddress() -> String? {
-        var address: String?
-        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        return getWifiNetworkInfo()?.ip
+    }
 
+    public static func getWifiNetworkInfo() -> WifiNetworkInfo? {
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
         guard getifaddrs(&ifaddr) == 0, let firstAddr = ifaddr else { return nil }
         defer { freeifaddrs(ifaddr) }
 
@@ -71,21 +80,75 @@ public enum NetworkIpHelper {
                 let name = String(cString: interface.ifa_name)
                 // en0 is Wi-Fi on iOS
                 if name == "en0" {
-                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    var ipHost = [CChar](repeating: 0, count: Int(NI_MAXHOST))
                     getnameinfo(
                         interface.ifa_addr,
                         socklen_t(interface.ifa_addr.pointee.sa_len),
-                        &hostname,
-                        socklen_t(hostname.count),
+                        &ipHost,
+                        socklen_t(ipHost.count),
                         nil,
                         socklen_t(0),
                         NI_NUMERICHOST
                     )
-                    address = String(cString: hostname)
-                    break
+                    let ipStr = String(cString: ipHost)
+
+                    var maskHost = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    getnameinfo(
+                        interface.ifa_netmask,
+                        socklen_t(interface.ifa_netmask.pointee.sa_len),
+                        &maskHost,
+                        socklen_t(maskHost.count),
+                        nil,
+                        socklen_t(0),
+                        NI_NUMERICHOST
+                    )
+                    let maskStr = String(cString: maskHost)
+
+                    let ipParts = ipStr.split(separator: ".").compactMap { UInt32($0) }
+                    let maskParts = maskStr.split(separator: ".").compactMap { UInt32($0) }
+
+                    var broadcastIp = "255.255.255.255"
+                    if ipParts.count == 4 && maskParts.count == 4 {
+                        let b0 = (ipParts[0] & maskParts[0]) | (~maskParts[0] & 0xFF)
+                        let b1 = (ipParts[1] & maskParts[1]) | (~maskParts[1] & 0xFF)
+                        let b2 = (ipParts[2] & maskParts[2]) | (~maskParts[2] & 0xFF)
+                        let b3 = (ipParts[3] & maskParts[3]) | (~maskParts[3] & 0xFF)
+                        broadcastIp = "\(b0).\(b1).\(b2).\(b3)"
+                    }
+
+                    let prefix = ipParts.count >= 3 ? "\(ipParts[0]).\(ipParts[1]).\(ipParts[2])" : "192.168.1"
+                    return WifiNetworkInfo(ip: ipStr, netmask: maskStr, broadcastIp: broadcastIp, prefix: prefix)
                 }
             }
         }
-        return address
+        return nil
+    }
+
+    /// Generates candidate host IPs on the /24 subnet, prioritized for smart TV DHCP patterns
+    public static func generateSubnetCandidates() -> [String] {
+        guard let info = getWifiNetworkInfo() else { return [] }
+        let currentLastOctet = info.ip.split(separator: ".").last.flatMap { Int($0) } ?? -1
+
+        // Order of highest probability for smart TVs:
+        // 1. Common static/low IPs: 2...40
+        // 2. Common DHCP upper pool: 100...150
+        // 3. Mid DHCP pool: 50...99
+        // 4. Remaining: 151...254 and 41...49
+        var order: [Int] = []
+        order.append(contentsOf: 2...40)
+        order.append(contentsOf: 100...150)
+        order.append(contentsOf: 50...99)
+        order.append(contentsOf: 151...254)
+        order.append(contentsOf: 41...49)
+
+        var result: [String] = []
+        var seen = Set<Int>()
+        for octet in order {
+            if octet != currentLastOctet && octet != 1 && !seen.contains(octet) {
+                seen.insert(octet)
+                result.append("\(info.prefix).\(octet)")
+            }
+        }
+        return result
     }
 }

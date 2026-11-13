@@ -33,7 +33,14 @@ public final class CastSessionManager: AirPlayControllerDelegate {
 
     public func refreshDlnaDevices() async {
         self.isDiscoveringDevices = true
-        let dlnaDevices = await DlnaDiscovery.shared.discoverDevices(timeoutSeconds: 3.0)
+        let dlnaDevices = await DlnaDiscovery.shared.discoverDevices(timeoutSeconds: 3.5)
+        self.availableDlnaDevices = dlnaDevices
+        self.isDiscoveringDevices = false
+    }
+
+    public func deepScanDlnaDevices() async {
+        self.isDiscoveringDevices = true
+        let dlnaDevices = await DlnaDiscovery.shared.deepScanSubnet()
         self.availableDlnaDevices = dlnaDevices
         self.isDiscoveringDevices = false
     }

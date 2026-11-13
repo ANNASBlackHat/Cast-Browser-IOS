@@ -41,6 +41,7 @@
 		A59045ACB84A8E06CEB80379 /* video_detector.js in Resources */ = {isa = PBXBuildFile; fileRef = 86CF4AA69E4A428535736645 /* video_detector.js */; };
 		A9CD439FB905F4A7EB508C87 /* StreamCandidateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A94A22A51F443E3ED4F56F /* StreamCandidateManager.swift */; };
 		B3B648768FCE45DE61121863 /* StreamClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545947C788FCFFF9B2482ACC /* StreamClassifier.swift */; };
+		B52E43049143ACE88D9BD9CE /* BonjourTvDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E44276B0E31FC6C1B2A664 /* BonjourTvDiscovery.swift */; };
 		C6A04C1DA0F1EAFFA1BA7A50 /* LocalHttpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59474517B9986EF0E4281A70 /* LocalHttpServer.swift */; };
 		CD674667821F294CC64AA2AE /* TabStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35284E0EABA851A1833291C3 /* TabStateManager.swift */; };
 		D00E422A9C2E489EDEF2ECC9 /* AirPlayRoutePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4B4193ACD9A58EE8AD7A8F /* AirPlayRoutePicker.swift */; };
@@ -90,6 +91,7 @@
 		C25C4C5EB730DA98BEB484C3 /* ProxyStreamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProxyStreamManager.swift; path = CastBrowser/Sources/Proxy/ProxyStreamManager.swift; sourceTree = SOURCE_ROOT; };
 		C5924F1EA053AB94552E2700 /* DetectedSubtitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DetectedSubtitle.swift; path = CastBrowser/Sources/Detect/Models/DetectedSubtitle.swift; sourceTree = SOURCE_ROOT; };
 		C9774ACABB7401584347F9B4 /* CastRemoteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CastRemoteSheet.swift; path = CastBrowser/Sources/UI/CastRemoteSheet.swift; sourceTree = SOURCE_ROOT; };
+		D8E44276B0E31FC6C1B2A664 /* BonjourTvDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BonjourTvDiscovery.swift; path = CastBrowser/Sources/Cast/DLNA/BonjourTvDiscovery.swift; sourceTree = SOURCE_ROOT; };
 		E3274B68A589CD2F9795CB52 /* WatchEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchEntry.swift; path = CastBrowser/Sources/Data/Models/WatchEntry.swift; sourceTree = SOURCE_ROOT; };
 		E3A74DB4A7EAA52BD5AEBBCD /* ContentBlockerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentBlockerManager.swift; path = CastBrowser/Sources/Browser/ContentBlockerManager.swift; sourceTree = SOURCE_ROOT; };
 		E45A4C189BDB7C2F1C3949CF /* EpisodeTitleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EpisodeTitleParser.swift; path = CastBrowser/Sources/Data/Parsers/EpisodeTitleParser.swift; sourceTree = SOURCE_ROOT; };
@@ -111,6 +113,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0985418C968CD1530BFF340C /* DLNA */ = {
+			isa = PBXGroup;
+			children = (
+				D8E44276B0E31FC6C1B2A664 /* BonjourTvDiscovery.swift */,
+			);
+			name = DLNA;
+			sourceTree = "<group>";
+		};
 		A50000012CE0000100000001 = {
 			isa = PBXGroup;
 			children = (
@@ -157,6 +167,7 @@
 				A5E44C13B7392A3318965CB9 /* HomeContinueWatchingView.swift */,
 				5D0747FEA718EC7DB51DC6ED /* CastDevicePickerSheet.swift */,
 				B24F412C9FE5D05C9222E3B8 /* VideoPreviewPlayerView.swift */,
+				0985418C968CD1530BFF340C /* DLNA */,
 			);
 			sourceTree = "<group>";
 		};
@@ -320,6 +331,7 @@
 				020A4ACDB5295495BB611528 /* HomeContinueWatchingView.swift in Sources */,
 				D3184EC0A5F73609DCCC9BF5 /* CastDevicePickerSheet.swift in Sources */,
 				099546FCA4F8C80DF3AAB861 /* VideoPreviewPlayerView.swift in Sources */,
+				B52E43049143ACE88D9BD9CE /* BonjourTvDiscovery.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

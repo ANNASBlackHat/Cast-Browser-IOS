@@ -14,6 +14,7 @@ struct CastDevicePickerSheet: View {
     @State private var manualIpInput: String = ""
     @State private var isProbingManualIp: Bool = false
     @State private var manualIpError: String?
+    @State private var wifiInfo: WifiNetworkInfo?
 
     var body: some View {
         NavigationStack {
@@ -68,18 +69,49 @@ struct CastDevicePickerSheet: View {
                     if CastSessionManager.shared.isDiscoveringDevices {
                         HStack(spacing: 12) {
                             ProgressView()
-                            Text("Scanning Wi-Fi for Smart TVs...")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Scanning Wi-Fi for Smart TVs...")
+                                    .font(.subheadline)
+                                if let ip = wifiInfo?.ip {
+                                    Text("iPad IP: \(ip) (Subnet: \(wifiInfo?.prefix ?? "")...)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
                         }
                         .padding(.vertical, 8)
                     } else if CastSessionManager.shared.availableDlnaDevices.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 10) {
                             Text("No DLNA TVs Found Automatically")
                                 .font(.subheadline.bold())
-                            Text("Make sure your TV is turned on and connected to the same Wi-Fi network. You can also connect directly by entering its IP address below.")
+
+                            Text("Ensure your TV is turned on and connected to the same Wi-Fi. If iOS prompted for 'Local Network', make sure it is allowed.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
+
+                            HStack(spacing: 10) {
+                                Button(action: {
+                                    Task {
+                                        await CastSessionManager.shared.deepScanDlnaDevices()
+                                    }
+                                }) {
+                                    Label("Deep Subnet Scan", systemImage: "waveform.and.magnifyingglass")
+                                        .font(.caption.bold())
+                                }
+                                .buttonStyle(.bordered)
+                                .controlSize(.small)
+
+                                Button(action: {
+                                    Task {
+                                        await CastSessionManager.shared.refreshDlnaDevices()
+                                    }
+                                }) {
+                                    Label("Rescan", systemImage: "arrow.clockwise")
+                                        .font(.caption)
+                                }
+                                .buttonStyle(.borderless)
+                                .controlSize(.small)
+                            }
                         }
                         .padding(.vertical, 6)
                     } else {
@@ -115,6 +147,11 @@ struct CastDevicePickerSheet: View {
                     HStack {
                         Text("DLNA / UPnP Smart TVs")
                         Spacer()
+                        if let ip = wifiInfo?.ip {
+                            Text("Wi-Fi: \(ip)")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
                         Button(action: {
                             Task {
                                 await CastSessionManager.shared.refreshDlnaDevices()
@@ -130,7 +167,7 @@ struct CastDevicePickerSheet: View {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            TextField("e.g. 192.168.1.105", text: $manualIpInput)
+                            TextField(wifiInfo?.prefix != nil ? "e.g. \(wifiInfo!.prefix).50" : "e.g. 192.168.1.105", text: $manualIpInput)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.numbersAndPunctuation)
                                 .autocorrectionDisabled()
@@ -143,7 +180,7 @@ struct CastDevicePickerSheet: View {
                                 Button("Connect") {
                                     connectManualIp()
                                 }
-                                .buttonStyle(.bordered)
+                                .buttonStyle(.borderedProminent)
                                 .disabled(manualIpInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                             }
                         }
@@ -158,7 +195,7 @@ struct CastDevicePickerSheet: View {
                 } header: {
                     Text("Direct Connect by TV IP Address")
                 } footer: {
-                    Text("Check your TV's Network Settings for its IP address if auto-discovery is blocked by router isolation.")
+                    Text("Check your TV's Network Settings for its IP address if discovery is blocked by router isolation or firewall.")
                 }
             }
             .navigationTitle("Select TV")
@@ -171,6 +208,7 @@ struct CastDevicePickerSheet: View {
                 }
             }
             .task {
+                self.wifiInfo = NetworkIpHelper.getWifiNetworkInfo()
                 await CastSessionManager.shared.refreshDlnaDevices()
             }
         }
@@ -189,7 +227,7 @@ struct CastDevicePickerSheet: View {
                 dismiss()
             } else {
                 isProbingManualIp = false
-                manualIpError = "Could not reach UPnP service at \(ip). Confirm TV is on."
+                manualIpError = "Could not reach UPnP service at \(ip). Confirm TV is on and on the same Wi-Fi."
             }
         }
     }
