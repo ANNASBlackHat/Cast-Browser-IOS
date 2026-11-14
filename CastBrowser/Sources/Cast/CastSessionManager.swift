@@ -32,6 +32,9 @@ public final class CastSessionManager: AirPlayControllerDelegate {
     }
 
     public func refreshDlnaDevices() async {
+        if self.availableDlnaDevices.isEmpty, let last = SavedDeviceManager.getLastDevice() {
+            self.availableDlnaDevices = [last]
+        }
         self.isDiscoveringDevices = true
         let dlnaDevices = await DlnaDiscovery.shared.discoverDevices(timeoutSeconds: 3.5)
         self.availableDlnaDevices = dlnaDevices
@@ -62,11 +65,12 @@ public final class CastSessionManager: AirPlayControllerDelegate {
         // Format cookie string if any
         let cookieHeader = cookies.map { "\($0.name)=\($0.value)" }.joined(separator: "; ")
 
-        // Register stream with local proxy
+        // Register stream with local proxy, respecting stream mimeType
         let (_, proxyUrl) = await ProxyStreamManager.shared.registerSession(
             streamUrl: stream.url,
             referer: pageUrl ?? stream.pageUrl,
-            cookies: cookieHeader.isEmpty ? nil : cookieHeader
+            cookies: cookieHeader.isEmpty ? nil : cookieHeader,
+            mimeType: stream.mimeType
         )
 
         // Route: If explicit DLNA device chosen -> use DLNA controller; otherwise route to AirPlay
@@ -75,10 +79,12 @@ public final class CastSessionManager: AirPlayControllerDelegate {
             let success = await DlnaController.shared.setAvTransportUri(
                 device: device,
                 streamUrl: proxyUrl,
-                title: stream.title
+                title: stream.title,
+                mimeType: stream.mimeType
             )
             if success {
                 self.playbackState.status = .playing
+                SavedDeviceManager.saveDevice(device)
             } else {
                 self.playbackState.status = .failed
             }

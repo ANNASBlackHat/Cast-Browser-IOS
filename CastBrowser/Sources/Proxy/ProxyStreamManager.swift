@@ -35,14 +35,19 @@ public actor ProxyStreamManager {
         streamUrl: URL,
         referer: URL?,
         userAgent: String = "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X)",
-        cookies: String? = nil
+        cookies: String? = nil,
+        mimeType: String = "video/mp4"
     ) -> (token: String, proxyUrl: URL) {
         let token = UUID().uuidString
         let session = ProxySession(originalUrl: streamUrl, referer: referer, userAgent: userAgent, cookies: cookies)
         sessions[token] = session
 
         let localIp = NetworkIpHelper.getLocalIpAddress() ?? "127.0.0.1"
-        let proxyUrl = URL(string: "http://\(localIp):\(proxyPort)/stream/\(token)/master.m3u8")!
+        let isHls = streamUrl.pathExtension.lowercased() == "m3u8" ||
+                    mimeType.lowercased().contains("mpegurl") ||
+                    streamUrl.absoluteString.lowercased().contains(".m3u8")
+        let proxyPath = isHls ? "stream/\(token)/master.m3u8" : "media/\(token)/video.mp4"
+        let proxyUrl = URL(string: "http://\(localIp):\(proxyPort)/\(proxyPath)")!
         return (token, proxyUrl)
     }
 

@@ -6,10 +6,21 @@
 import Foundation
 
 public enum DlnaSoapHelper {
-    public static func buildSetAvTransportUriXml(streamUrl: String, title: String) -> String {
+    public static func buildSetAvTransportUriXml(streamUrl: String, title: String, mimeType: String = "video/mp4") -> String {
         let escapedTitle = escapeXml(title)
+        let isHls = mimeType.lowercased().contains("mpegurl") || streamUrl.lowercased().contains(".m3u8")
+        let effectiveMime = isHls ? "application/vnd.apple.mpegurl" : (mimeType.isEmpty ? "video/mp4" : mimeType)
+        let flags = isHls
+            ? "DLNA.ORG_OP=00;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000"
+            : "DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000"
+
+        let primaryRes = "&lt;res protocolInfo=&quot;http-get:*:\(effectiveMime):\(flags)&quot;&gt;\(streamUrl)&lt;/res&gt;"
+        let fallbackRes = !isHls
+            ? "&lt;res protocolInfo=&quot;http-get:*:video/mp4:*&quot;&gt;\(streamUrl)&lt;/res&gt;"
+            : ""
+
         let didlMetadata = """
-        &lt;DIDL-Lite xmlns=&quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:upnp=&quot;urn:schemas-upnp-org:metadata-1-0/upnp/&quot;&gt;&lt;item id=&quot;0&quot; parentID=&quot;-1&quot; restricted=&quot;1&quot;&gt;&lt;dc:title&gt;\(escapedTitle)&lt;/dc:title&gt;&lt;upnp:class&gt;object.item.videoItem&lt;/upnp:class&gt;&lt;res protocolInfo=&quot;http-get:*:video/*:*&quot;&gt;\(streamUrl)&lt;/res&gt;&lt;/item&gt;&lt;/DIDL-Lite&gt;
+        &lt;DIDL-Lite xmlns=&quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot; xmlns:upnp=&quot;urn:schemas-upnp-org:metadata-1-0/upnp/&quot; xmlns:dlna=&quot;urn:schemas-dlna-org:metadata-1-0/&quot; xmlns:sec=&quot;http://www.sec.co.kr/&quot;&gt;&lt;item id=&quot;0&quot; parentID=&quot;-1&quot; restricted=&quot;1&quot;&gt;&lt;dc:title&gt;\(escapedTitle)&lt;/dc:title&gt;&lt;upnp:class&gt;object.item.videoItem&lt;/upnp:class&gt;\(primaryRes)\(fallbackRes)&lt;/item&gt;&lt;/DIDL-Lite&gt;
         """
 
         return """

@@ -21,6 +21,10 @@ public actor DlnaDiscovery {
         self.urlSession = URLSession(configuration: config)
     }
 
+    public func updateDiscoveredDevice(_ device: CastDevice) {
+        discoveredDevices[device.id] = device
+    }
+
     /// Discovers DLNA/UPnP Smart TVs using multi-channel strategy:
     /// 1. Bonjour / DIAL mDNS discovery (triggers Apple Local Network prompt)
     /// 2. BSD socket SSDP with SO_BROADCAST (255.255.255.255 and subnet broadcast)
@@ -29,6 +33,19 @@ public actor DlnaDiscovery {
         guard !isSearching else { return Array(discoveredDevices.values) }
         isSearching = true
         defer { isSearching = false }
+
+        // Fast Check: If we have a saved last-connected device, check and display it immediately
+        if let lastDevice = SavedDeviceManager.getLastDevice() {
+            discoveredDevices[lastDevice.id] = lastDevice
+            if let host = SavedDeviceManager.getLastDeviceHostOrIp() {
+                // Quick async ping to refresh its state in background
+                Task { [weak self] in
+                    if let probed = await self?.probeDevice(at: host) {
+                        await self?.updateDiscoveredDevice(probed)
+                    }
+                }
+            }
+        }
 
         // Start Bonjour discovery (officially prompts for Local Network Permission)
         await BonjourTvDiscovery.shared.startBrowsing()

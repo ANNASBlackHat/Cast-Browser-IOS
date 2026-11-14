@@ -19,11 +19,11 @@ public actor DlnaController {
 
     private init() {}
 
-    public func setAvTransportUri(device: CastDevice, streamUrl: URL, title: String) async -> Bool {
+    public func setAvTransportUri(device: CastDevice, streamUrl: URL, title: String, mimeType: String = "video/mp4") async -> Bool {
         self.activeDevice = device
         guard let controlUrl = device.controlUrl else { return false }
 
-        let body = DlnaSoapHelper.buildSetAvTransportUriXml(streamUrl: streamUrl.absoluteString, title: title)
+        let body = DlnaSoapHelper.buildSetAvTransportUriXml(streamUrl: streamUrl.absoluteString, title: title, mimeType: mimeType)
         let success = await sendSoapAction(controlUrl: controlUrl, action: "SetAVTransportURI", body: body)
 
         if success {

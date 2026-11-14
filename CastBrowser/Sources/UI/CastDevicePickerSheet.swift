@@ -122,8 +122,19 @@ struct CastDevicePickerSheet: View {
                                     .foregroundColor(.accentColor)
 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(device.name)
-                                        .font(.headline)
+                                    HStack(spacing: 6) {
+                                        Text(device.name)
+                                            .font(.headline)
+                                        if device.id == SavedDeviceManager.getLastDevice()?.id {
+                                            Text("Recently Used")
+                                                .font(.caption2.bold())
+                                                .foregroundColor(.blue)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(Color.blue.opacity(0.12))
+                                                .clipShape(Capsule())
+                                        }
+                                    }
                                     if let model = device.modelName {
                                         Text(model)
                                             .font(.caption2)
@@ -222,6 +233,7 @@ struct CastDevicePickerSheet: View {
 
         Task {
             if let device = await DlnaDiscovery.shared.probeDevice(at: ip) {
+                SavedDeviceManager.saveDevice(device)
                 isProbingManualIp = false
                 onSelectDevice(device)
                 dismiss()

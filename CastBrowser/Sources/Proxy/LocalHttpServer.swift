@@ -84,14 +84,24 @@ public actor LocalHttpServer {
             return
         }
 
-        let method = parts[0]
+        let method = parts[0].uppercased()
         let path = parts[1]
 
-        // Parse path: /stream/{token}/master.m3u8 OR /segment/{token}?upstream={url}
+        var headers: [String: String] = [:]
+        for line in lines.dropFirst() {
+            let headerParts = line.split(separator: ":", maxSplits: 1)
+            if headerParts.count == 2 {
+                headers[headerParts[0].trimmingCharacters(in: .whitespaces).lowercased()] = headerParts[1].trimmingCharacters(in: .whitespaces)
+            }
+        }
+
+        // Parse path: /stream/{token}/master.m3u8 OR /segment/{token}?upstream={url} OR /media/{token}/video.mp4
         if path.contains("/stream/") {
             await handleMasterPlaylistRequest(path: path, connection: connection)
         } else if path.contains("/segment/") {
             await handleSegmentRequest(path: path, connection: connection)
+        } else if path.contains("/media/") {
+            await handleMediaRequest(path: path, method: method, headers: headers, connection: connection)
         } else {
             sendResponse(connection: connection, status: "404 Not Found", body: "Unknown endpoint".data(using: .utf8)!)
         }
@@ -186,24 +196,98 @@ public actor LocalHttpServer {
         }
     }
 
+    private func handleMediaRequest(
+        path: String,
+        method: String,
+        headers: [String: String],
+        connection: NWConnection
+    ) async {
+        let components = path.components(separatedBy: "/")
+        guard components.count >= 3 else {
+            sendResponse(connection: connection, status: "404 Not Found", body: Data())
+            return
+        }
+        let token = components[2]
+        guard let session = await ProxyStreamManager.shared.getSession(token: token) else {
+            sendResponse(connection: connection, status: "404 Session Not Found", body: Data())
+            return
+        }
+
+        var request = URLRequest(url: session.originalUrl)
+        request.httpMethod = method
+        if let referer = session.referer {
+            request.setValue(referer.absoluteString, forHTTPHeaderField: "Referer")
+        }
+        request.setValue(session.userAgent, forHTTPHeaderField: "User-Agent")
+        if let cookies = session.cookies {
+            request.setValue(cookies, forHTTPHeaderField: "Cookie")
+        }
+        if let range = headers["range"] {
+            request.setValue(range, forHTTPHeaderField: "Range")
+        }
+
+        do {
+            let (data, response) = try await urlSession.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                sendResponse(connection: connection, status: "502 Bad Gateway", body: Data())
+                return
+            }
+
+            let status = httpResponse.statusCode == 206 ? "206 Partial Content" : "200 OK"
+            let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type") ?? "video/mp4"
+            let contentRange = httpResponse.value(forHTTPHeaderField: "Content-Range")
+            let contentLength = httpResponse.value(forHTTPHeaderField: "Content-Length") ?? "\(data.count)"
+
+            var extraHeaders = [
+                "Accept-Ranges: bytes",
+                "Content-Length: \(method == "HEAD" ? contentLength : "\(data.count)")"
+            ]
+            if let contentRange {
+                extraHeaders.append("Content-Range: \(contentRange)")
+            }
+
+            sendResponse(
+                connection: connection,
+                status: status,
+                contentType: contentType,
+                extraHeaders: extraHeaders,
+                body: method == "HEAD" ? Data() : data
+            )
+        } catch {
+            sendResponse(connection: connection, status: "502 Bad Gateway", body: Data())
+        }
+    }
+
     private func sendResponse(
         connection: NWConnection,
         status: String,
         contentType: String = "text/plain",
+        extraHeaders: [String] = [],
         body: Data
     ) {
-        let headers = """
-        HTTP/1.1 \(status)\r
-        Content-Type: \(contentType)\r
-        Content-Length: \(body.count)\r
-        Access-Control-Allow-Origin: *\r
-        Access-Control-Allow-Methods: GET, HEAD, OPTIONS\r
-        Connection: close\r
-        \r\n
-        """
+        var headerLines = [
+            "HTTP/1.1 \(status)",
+            "Content-Type: \(contentType)",
+            "Access-Control-Allow-Origin: *",
+            "Access-Control-Allow-Methods: GET, HEAD, OPTIONS",
+            "Connection: close"
+        ]
+        var hasContentLength = false
+        for h in extraHeaders {
+            if h.lowercased().hasPrefix("content-length:") {
+                hasContentLength = true
+            }
+            headerLines.append(h)
+        }
+        if !hasContentLength {
+            headerLines.append("Content-Length: \(body.count)")
+        }
 
-        var fullData = headers.data(using: .utf8) ?? Data()
-        fullData.append(body)
+        let headerString = headerLines.joined(separator: "\r\n") + "\r\n\r\n"
+        var fullData = headerString.data(using: .utf8) ?? Data()
+        if !body.isEmpty {
+            fullData.append(body)
+        }
 
         connection.send(content: fullData, completion: .contentProcessed { _ in
             connection.cancel()

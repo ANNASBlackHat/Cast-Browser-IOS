@@ -32,6 +32,21 @@ public struct DetectedStream: Identifiable, Equatable, Hashable, Sendable {
     public let isDrmProtected: Bool
     public let detectedAt: Date
 
+    public var mimeType: String {
+        switch format {
+        case .hls:
+            return "application/vnd.apple.mpegurl"
+        case .mp4:
+            return "video/mp4"
+        case .dash:
+            return "application/dash+xml"
+        case .unknown:
+            return url.pathExtension.lowercased() == "m3u8" || url.absoluteString.lowercased().contains(".m3u8")
+                ? "application/vnd.apple.mpegurl"
+                : "video/mp4"
+        }
+    }
+
     public init(
         id: UUID = UUID(),
         url: URL,

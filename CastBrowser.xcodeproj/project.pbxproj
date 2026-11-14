@@ -46,6 +46,7 @@
 		CD674667821F294CC64AA2AE /* TabStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35284E0EABA851A1833291C3 /* TabStateManager.swift */; };
 		D00E422A9C2E489EDEF2ECC9 /* AirPlayRoutePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4B4193ACD9A58EE8AD7A8F /* AirPlayRoutePicker.swift */; };
 		D3184EC0A5F73609DCCC9BF5 /* CastDevicePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0747FEA718EC7DB51DC6ED /* CastDevicePickerSheet.swift */; };
+		D3294D6CB4A04ECB53D86CDC /* SavedDeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C04098A36208072FEBC1CF /* SavedDeviceManager.swift */; };
 		D47C419CA02416C22794E79A /* ProxyStreamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25C4C5EB730DA98BEB484C3 /* ProxyStreamManager.swift */; };
 		D678465AA1D2F1A3234672C3 /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B48410D9B9B131306273807 /* TabItem.swift */; };
 		D8FB42C59B4F004D899A5C0D /* ContentBlockerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A74DB4A7EAA52BD5AEBBCD /* ContentBlockerManager.swift */; };
@@ -60,6 +61,7 @@
 		230C46E4AFA18F6570C42AC1 /* DetectedStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DetectedStream.swift; path = CastBrowser/Sources/Detect/Models/DetectedStream.swift; sourceTree = SOURCE_ROOT; };
 		2A304C3EBA6B5E95807E47B5 /* IpadTabStripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IpadTabStripView.swift; path = CastBrowser/Sources/UI/Components/IpadTabStripView.swift; sourceTree = SOURCE_ROOT; };
 		35284E0EABA851A1833291C3 /* TabStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabStateManager.swift; path = CastBrowser/Sources/Browser/TabStateManager.swift; sourceTree = SOURCE_ROOT; };
+		38C04098A36208072FEBC1CF /* SavedDeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SavedDeviceManager.swift; path = CastBrowser/Sources/Cast/DLNA/SavedDeviceManager.swift; sourceTree = SOURCE_ROOT; };
 		3F4B4193ACD9A58EE8AD7A8F /* AirPlayRoutePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AirPlayRoutePicker.swift; path = CastBrowser/Sources/Cast/AirPlay/AirPlayRoutePicker.swift; sourceTree = SOURCE_ROOT; };
 		41E946049B54B0E7671E1084 /* WKWebViewPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WKWebViewPool.swift; path = CastBrowser/Sources/Browser/WKWebViewPool.swift; sourceTree = SOURCE_ROOT; };
 		46C541DF9BE14B568818398A /* BookmarkItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookmarkItem.swift; path = CastBrowser/Sources/Data/Models/BookmarkItem.swift; sourceTree = SOURCE_ROOT; };
@@ -117,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				D8E44276B0E31FC6C1B2A664 /* BonjourTvDiscovery.swift */,
+				38C04098A36208072FEBC1CF /* SavedDeviceManager.swift */,
 			);
 			name = DLNA;
 			sourceTree = "<group>";
@@ -332,6 +335,7 @@
 				D3184EC0A5F73609DCCC9BF5 /* CastDevicePickerSheet.swift in Sources */,
 				099546FCA4F8C80DF3AAB861 /* VideoPreviewPlayerView.swift in Sources */,
 				B52E43049143ACE88D9BD9CE /* BonjourTvDiscovery.swift in Sources */,
+				D3294D6CB4A04ECB53D86CDC /* SavedDeviceManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
